@@ -1,32 +1,43 @@
-= sieve
+= Sieve ActiveRecord Filtering Engine
 
-* http://github.com/#{github_username}/#{project_name}
+* http://github.com/agincourt/sieve
 
 == DESCRIPTION:
 
-FIX (describe your package)
+With Sieve you can create a 'filter' object where you specify what dataset you are filtering (i.e. the Product class), and what options users have, for example, filtering by date added (range), number sold (integer) etc.
 
 == FEATURES/PROBLEMS:
 
-* FIX (list of features or problems)
+* No features as of yet, early development.
 
 == SYNOPSIS:
 
-  FIX (code sample of usage)
-
-== REQUIREMENTS:
-
-* FIX (list of requirements)
+  # in app/filters
+  class MyFilter < Sieve::Filter
+    filter Products
+    
+    by :created_at, :range
+    by :amount_sold
+  end
+  
+  # in your controller
+  @products = MyFilter.new(params[:filter])
+  
+  # in your view
+  # to display the filters:
+  <%= sieve @products %>
+  # to display the returned objects (as normal):
+  <%= for product in @products %>
 
 == INSTALL:
 
-* FIX (sudo gem install, anything else)
+sudo gem install sieve
 
 == LICENSE:
 
 (The MIT License)
 
-Copyright (c) 2009 FIXME full name
+Copyright (c) 2009 Agincourt Technologies Ltd
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
