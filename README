@@ -1,0 +1,39 @@
+Sieve: Filtering System
+=======================
+
+Filter datasets using 
+
+Installation
+============
+
+Step 1 : Install the plugin
+
+  $ script/plugin install git://github.com/agincourt/sieve.git
+
+Step 2 : Setup your filters on your models
+
+  class YourModel < ActiveRecord::Base
+    include Sieve::Filterable
+
+    filter_by :status
+    filter_by :name
+  end
+    
+Step 3 : Setup the filtration in your controller
+
+  @yourmodels = YourModel.filter(params[:filters]).find(...)
+  # you can continue with any named scopes or conditions you wish
+
+Step 4 : Setup your filter form in your view
+
+  <%= form_tag('', :method => 'get') %>
+    <fieldset>
+      <legend>Filters</legend>
+      <div>
+        <%= sieve @yourmodels %>
+        <%= submit_tag 'Update Filters &raquo;', :name => nil %>
+      </div>
+    </fieldset>
+  </form>
+
+Copyright (c) 2009 Agincourt Technologies Ltd, released under the MIT license

@@ -1,4 +1,6 @@
 module Sieve
-  class NoColumnError < StandardError
+  module Errors
+    class NoColumnError < StandardError
+    end
   end
 end
