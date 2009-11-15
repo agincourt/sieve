@@ -1,1 +1,1 @@
-require 'sieve'
+require File.dirname(__FILE__) + "/sieve/init.rb"

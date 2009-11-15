@@ -1,3 +1,6 @@
+require 'rubygems'
 require 'stringio'
 require 'test/unit'
+require 'active_record'
+require 'mocha'
 require File.dirname(__FILE__) + '/../lib/sieve'

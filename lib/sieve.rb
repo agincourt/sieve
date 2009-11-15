@@ -5,4 +5,4 @@ require 'sieve/view_helpers'
 module Sieve
 end
 
-ActionView::Base.send :include, Sieve::ViewHelpers
+ActionView::Base.send :include, Sieve::ViewHelpers if defined?(ActionView)
