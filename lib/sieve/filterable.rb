@@ -5,6 +5,7 @@ module Sieve
       base.extend(ClassMethods)
       base.class_eval do
         named_scope :sieve_search, lambda { |attribute,value| { :conditions => ["#{attribute.to_s.downcase} LIKE ?", "%#{value}%"] } }
+        named_scope :sieve_exact, lambda { |attribute,value| { :conditions => ["#{attribute.to_s.downcase} = ?", value] } }
       end
       base.send(:include, InstanceMethods)
     end
@@ -24,6 +25,10 @@ module Sieve
           when :string, :text # we want to search
             if params[attribute].present?
               current_scope = current_scope.sieve_search(attribute, params[attribute])
+            end
+          when :integer
+            if params[attribute].present?
+              current_scope = current_scope.sieve_exact(attribute, params[attribute])
             end
           end
         }
