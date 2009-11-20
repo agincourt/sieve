@@ -12,22 +12,28 @@ module Sieve
       label = label_tag("filters_#{attribute}", attribute.to_s.humanize)
       
       input = case options[:type]
-      when :string, :text
-        text_field_tag("filters[#{attribute}]", params[:filters][attribute], :id => "filters_#{attribute}")
-      when :boolean
-        check_box_tag("filters[#{attribute}]", '1', params[:filters][attribute], :id => "filters_#{attribute}")
-      when :integer
-        if attribute.to_s =~ /\_id$/i
-          select_tag(
-            "filters[#{attribute}]",
+      when :string, :text, :integer, :decimal
+        if options[:collection]
+          select_tag("filters[#{attribute}]",
             options_for_select(
-              [['-', nil]] + attribute.to_s.gsub(/\_id$/i, '').classify.constantize.all.map { |obj| [obj.name, obj.id] },
+              (options[:include_blank] ? [[options[:include_blank], nil]] : []) +
+              options[:collection].map { |obj| [obj.name, obj.id] }, 
               params[:filters][attribute].present? ? params[:filters][attribute].to_i : nil
+            )
+          )
+        elsif options[:set]
+          select_tag("filters[#{attribute}]",
+            options_for_select(
+              (options[:include_blank] ? [[options[:include_blank], nil]] : []) +
+              options[:set],
+              params[:filters][attribute].present? ? params[:filters][attribute] : nil
             )
           )
         else
           text_field_tag("filters[#{attribute}]", params[:filters][attribute], :id => "filters_#{attribute}")
         end
+      when :boolean
+        check_box_tag("filters[#{attribute}]", '1', params[:filters][attribute], :id => "filters_#{attribute}")
       else
         ''
       end

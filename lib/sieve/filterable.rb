@@ -24,9 +24,17 @@ module Sieve
           case options[:type]
           when :string, :text # we want to search
             if params[attribute].present?
-              current_scope = current_scope.sieve_search(attribute, params[attribute])
+              # if a set of items are provided
+              if options[:set] || options[:collection]
+                # we want the exact item
+                current_scope = current_scope.sieve_exact(attribute, params[attribute])
+              # if it's just a string
+              else
+                # search for it
+                current_scope = current_scope.sieve_search(attribute, params[attribute])
+              end
             end
-          when :integer
+          when :integer, :decimal
             if params[attribute].present?
               current_scope = current_scope.sieve_exact(attribute, params[attribute])
             end
@@ -37,19 +45,18 @@ module Sieve
       end
       
       def filtering_on
-        @filtering_on ||= columns.inject({}) { |cols,col|
-          if (read_inheritable_attribute(:filters).keys || []).include?(col.name.to_sym) && col.type
-            cols.merge!({ col.name.to_sym => read_inheritable_attribute(:filters)[col.name.to_sym].merge(:type => col.type.to_sym) })
-          end
-          cols
-        }
+        read_inheritable_attribute(:filters)
       end
           
       private
       def filter_by(attribute_name, options = {})
-        attribute_name = attribute_name.to_sym
-        raise Errors::NoColumnError, "#{attribute_name} cannot be filtered" unless columns.select { |c| c.name.to_sym == attribute_name }.length > 0
-        write_inheritable_hash(:filters, attribute_name.to_sym => options)
+        write_inheritable_hash(:filters, { attribute_name.to_sym => options.merge(:type => column_type_for(attribute_name.to_sym)) })
+      end
+      
+      def column_type_for(attribute_name)
+        cols = columns.select { |col| col.name.to_sym == attribute_name.to_sym }
+        raise Errors::NoColumnError, "#{attribute_name} cannot be filtered" unless cols.length > 0
+        cols.first.type
       end
     end
     

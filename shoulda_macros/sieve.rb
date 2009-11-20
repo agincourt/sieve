@@ -20,7 +20,7 @@ module Sieve
         klass = described_type rescue model_class
         attributes.each { |attribute|
           should "filter on #{attribute}" do
-            assert klass.filtering_on.include?(attribute)
+            assert klass.filtering_on.include?(attribute.to_sym)
           end
         }
       end
