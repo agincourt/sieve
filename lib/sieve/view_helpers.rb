@@ -2,16 +2,16 @@ module Sieve
   module ViewHelpers
     def sieve(collection)
       params[:filters] ||= {}
-      collection.sieve_class.filtering_on.map { |attribute,type|
-        filter_field_for(attribute,type)
+      collection.sieve_class.filtering_on.map { |attribute,options|
+        filter_field_for(attribute,options)
       }.sort { |a,b| a[:name].to_s<=>b[:name].to_s }.map { |f| f[:field] }.join("\n")
     end
     
     private
-    def filter_field_for(attribute, type)    
+    def filter_field_for(attribute, options)    
       label = label_tag("filters_#{attribute}", attribute.to_s.humanize)
       
-      input = case type
+      input = case options[:type]
       when :string, :text
         text_field_tag("filters[#{attribute}]", params[:filters][attribute], :id => "filters_#{attribute}")
       when :boolean

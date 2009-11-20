@@ -20,8 +20,8 @@ module Sieve
         # load our current scope
         current_scope = self
         # for each setup filter
-        filtering_on.each { |attribute, type|
-          case type
+        filtering_on.each { |attribute, options|
+          case options[:type]
           when :string, :text # we want to search
             if params[attribute].present?
               current_scope = current_scope.sieve_search(attribute, params[attribute])
@@ -39,7 +39,7 @@ module Sieve
       def filtering_on
         @filtering_on ||= columns.inject({}) { |cols,col|
           if (read_inheritable_attribute(:filters).keys || []).include?(col.name.to_sym) && col.type
-            cols.merge!({ col.name.to_sym => col.type.to_sym })
+            cols.merge!({ col.name.to_sym => read_inheritable_attribute(:filters)[col.name.to_sym].merge(:type => col.type.to_sym) })
           end
           cols
         }
