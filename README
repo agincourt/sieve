@@ -47,7 +47,12 @@ The filter_by method currently supports the following options (usage: filter_by 
   this will change the input field to a select box with the chosen options.
 
 * collection (class or scope or array)
-  Pass class, scope or array to which 'each' will be called to produce the same result as above.
+  Pass class, scope or array to which 'each' will be called to produce the same result as above. Defaults to calling the 'id' method on each object in the collection, unless you provide the 'display' option (see below).
+  
+* display (proc)
+  You can define a custom Proc which will be run on each object in a collection to return more human output, e.g:
+  :display => Proc.new { |article| ["#{article.title} by #{article.author}", article.id] }
+  You should return an array of the label, followed by the identifier (typically the id or a string)
   
 * include_blank (string)
   Much like in the select form helper, you can opt to include a blank field at the top. The string

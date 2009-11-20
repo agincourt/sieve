@@ -17,7 +17,7 @@ module Sieve
           select_tag("filters[#{attribute}]",
             options_for_select(
               (options[:include_blank] ? [[options[:include_blank], nil]] : []) +
-              options[:collection].map { |obj| [obj.name, obj.id] }, 
+              options[:collection].map { |obj| options[:display] ? options[:display].call(obj) : [obj.id] }, 
               params[:filters][attribute].present? ? params[:filters][attribute].to_i : nil
             )
           )
