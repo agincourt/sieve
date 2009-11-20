@@ -58,5 +58,11 @@ The filter_by method currently supports the following options (usage: filter_by 
   Much like in the select form helper, you can opt to include a blank field at the top. The string
   will be displayed within the first option, e.g.:
   :include_blank => '-- Select One --' # output: <option value="">-- Select One --</option>
+  
+* label (string)
+  Override the label text that will be placed next to the input in the form
+
+* max_length (integer)
+  Sets the maxlength HTML attribute on <input> fields (used by string, text, decimal and integer input fields)
 
 Copyright (c) 2009 Agincourt Technologies Ltd, released under the MIT license

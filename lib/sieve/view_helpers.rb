@@ -9,7 +9,7 @@ module Sieve
     
     private
     def filter_field_for(attribute, options)    
-      label = label_tag("filters_#{attribute}", attribute.to_s.humanize)
+      label = label_tag("filters_#{attribute}", options[:label] ? options[:label] : attribute.to_s.humanize)
       
       input = case options[:type]
       when :string, :text, :integer, :decimal
@@ -30,7 +30,7 @@ module Sieve
             )
           )
         else
-          text_field_tag("filters[#{attribute}]", params[:filters][attribute], :id => "filters_#{attribute}")
+          text_field_tag("filters[#{attribute}]", params[:filters][attribute], :id => "filters_#{attribute}", :maxlength => options[:max_length])
         end
       when :boolean
         check_box_tag("filters[#{attribute}]", '1', params[:filters][attribute], :id => "filters_#{attribute}")
