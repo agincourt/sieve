@@ -36,4 +36,22 @@ Step 4 : Setup your filter form in your view
     </fieldset>
   </form>
 
+Advanced
+========
+
+The filter_by method currently supports the following options (usage: filter_by attribute_name, options = { })
+
+* set (array)
+  Pass an array of arrays, with field name and identifier e.g:
+  :set => [ ['Complete', 'complete'], ['Open', 'open'] ]
+  this will change the input field to a select box with the chosen options.
+
+* collection (class or scope or array)
+  Pass class, scope or array to which 'each' will be called to produce the same result as above.
+  
+* include_blank (string)
+  Much like in the select form helper, you can opt to include a blank field at the top. The string
+  will be displayed within the first option, e.g.:
+  :include_blank => '-- Select One --' # output: <option value="">-- Select One --</option>
+
 Copyright (c) 2009 Agincourt Technologies Ltd, released under the MIT license
