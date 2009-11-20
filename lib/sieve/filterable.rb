@@ -38,7 +38,7 @@ module Sieve
       
       def filtering_on
         @filtering_on ||= columns.inject({}) { |cols,col|
-          if (read_inheritable_attribute(:filters) || []).include?(col.name.to_sym) && col.type
+          if (read_inheritable_attribute(:filters).keys || []).include?(col.name.to_sym) && col.type
             cols.merge!({ col.name.to_sym => col.type.to_sym })
           end
           cols
@@ -46,10 +46,10 @@ module Sieve
       end
           
       private
-      def filter_by(attribute_name)
+      def filter_by(attribute_name, options = {})
         attribute_name = attribute_name.to_sym
         raise Errors::NoColumnError, "#{attribute_name} cannot be filtered" unless columns.select { |c| c.name.to_sym == attribute_name }.length > 0
-        write_inheritable_array(:filters, [attribute_name])
+        write_inheritable_hash(:filters, attribute_name.to_sym => options)
       end
     end
     
