@@ -30,15 +30,15 @@ class SieveTest < Test::Unit::TestCase
   
   def test_should_use_exact_searching_when_specifying_a_set_or_collection
     object = mocked_object
-    # expectations
-    object.expects(:sieve_exact).with(:name, 'jim').once
     # filter by with set
     object.send(:filter_by, :name, :set => [['Jim', 'jim'], ['Fred', 'fred']])
     # check the set is defined
     assert object.filtering_on.include?(:name), 'Filter of DB attribute not appearing in filtering_on list'
     assert object.filtering_on[:name].include?(:set), 'Set not being stored'
     # let's filter:
-    object.filter(:name => 'jim')
+    result = object.filter(:name => 'jim')
+    assert result.class.name.to_s =~ /scope/i, 'Should return a ActiveRecord::NamedScope::Scope object'
+    assert result.find(:all).kind_of?(Array)
   end
   
   private

@@ -6,6 +6,7 @@ module Sieve
       base.class_eval do
         named_scope :sieve_search, lambda { |attribute,value| { :conditions => ["#{attribute.to_s.downcase} LIKE ?", "%#{value}%"] } }
         named_scope :sieve_exact, lambda { |attribute,value| { :conditions => ["#{attribute.to_s.downcase} = ?", value] } }
+        named_scope :sieve_null, {}
       end
       base.send(:include, InstanceMethods)
     end
@@ -18,7 +19,7 @@ module Sieve
       def filter(params)
         params ||= {}
         # load our current scope
-        current_scope = self
+        current_scope = self.sieve_null
         # for each setup filter
         filtering_on.each { |attribute, options|
           case options[:type]
