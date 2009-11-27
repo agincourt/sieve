@@ -5,7 +5,7 @@ class SieveTest < Test::Unit::TestCase
     # mock the object
     object = TestObject
     # check for filter_by, filtering_on, filter, sieve_class methods
-    [:filter_by, :filtering_on, :filter, :sieve_class].each { |method|
+    [:filter_by, :filtering_on, :order_by, :ordering_on, :filter, :sieve_class].each { |method|
       assert object.respond_to?(method, true), "filterable objects should respond to: #{method}"
     }
   end
@@ -25,6 +25,17 @@ class SieveTest < Test::Unit::TestCase
     assert object.filtering_on.include?(:name), 'Filter of DB attribute not appearing in filtering_on list'
     # try to filter a non-column attribute
     e = assert_raise(Sieve::Errors::NoColumnError) { object.send(:filter_by, :random) }
+    assert_match /cannot be filtered/i, e.message, 'Should have raised exception for non-db attribute'
+  end
+  
+  def test_only_columns_in_the_db_can_be_ordered
+    object = mocked_object
+    # add filters for the object that don't exist in columns
+    object.send(:order_by, :name)
+    # check the filters added don't actual appear in the filtering_on list
+    assert object.ordering_on.include?(:name), 'Order of DB attribute not appearing in ordering_on list'
+    # try to filter a non-column attribute
+    e = assert_raise(Sieve::Errors::NoColumnError) { object.send(:order_by, :random) }
     assert_match /cannot be filtered/i, e.message, 'Should have raised exception for non-db attribute'
   end
   

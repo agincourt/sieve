@@ -41,6 +41,19 @@ module Sieve
             end
           end
         }
+        
+        if params[:order_by]
+          # default to descending
+          order_method = params[:order_method].downcase == 'asc' ? 'asc' : 'desc'
+          # check the parameter can be ordered on
+          raise Errors::NotOptionError, "#{params[:order_by]} cannot be ordered upon." unless ordering_on.include?(params[:order_by])
+          # add it to the scope
+          current_scope = current_scope.scoped(:order => "#{params[:order_by]} #{order_method.upcase}")
+        # if no order is passed, use the default
+        elsif read_inheritable_attribute(:default_order_by)
+          current_scope = current_scope.scoped(:order => "#{read_inheritable_attribute(:default_order_by)} #{read_inheritable_attribute(:default_order_method).upcase}")
+        end
+        
         # return the scope object
         current_scope
       end
@@ -48,10 +61,32 @@ module Sieve
       def filtering_on
         read_inheritable_attribute(:filters)
       end
+      
+      def ordering_on
+        read_inheritable_attribute(:order_by)
+      end
           
       private
       def filter_by(attribute_name, options = {})
         write_inheritable_hash(:filters, { attribute_name.to_sym => options.merge(:type => column_type_for(attribute_name.to_sym)) })
+      end
+      
+      def order_by(attribute_name, options = {})
+        # throw an exception if the column doesn't exist
+        column_type_for(attribute_name.to_sym)
+        # add the attribute into the hash
+        write_inheritable_array(:order_by, [ attribute_name.to_sym ])
+        # if this order should be the default
+        if options[:default]
+          # if a default has already been defined
+          if read_inheritable_attribute(:default_order_by)
+            # throw them out!
+            raise Errors::DuplicateDefaultError, "#{read_inheritable_attribute(:default_order_by)} is already set as the default order."
+          end
+          # set the orders
+          write_inheritable_attribute(:default_order_by, attribute_name.to_sym)
+          write_inheritable_attribute(:default_order_method, options[:default].downcase == 'asc' ? 'asc' : 'desc')
+        end
       end
       
       def column_type_for(attribute_name)
