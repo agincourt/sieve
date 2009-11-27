@@ -1,7 +1,7 @@
 Sieve: Filtering System
 =======================
 
-Filter datasets using 
+Filter datasets using a DSL which essentially sets appropriate named scopes on your model from parameters a user completes in the form. You define your filterable attributes in the model, then use a helper method in your view to display the form fields with appropriate selections - it's that simple.
 
 Installation
 ============
