@@ -42,11 +42,11 @@ module Sieve
           end
         }
         
-        if params[:order_by]
+        if params[:order_by].present?
           # default to descending
           order_method = params[:order_method].downcase == 'asc' ? 'asc' : 'desc'
           # check the parameter can be ordered on
-          raise Errors::NotOptionError, "#{params[:order_by]} cannot be ordered upon." unless ordering_on.include?(params[:order_by])
+          raise Errors::NotOptionError, "#{params[:order_by]} cannot be ordered upon." unless ordering_on.include?(params[:order_by].to_sym)
           # add it to the scope
           current_scope = current_scope.scoped(:order => "#{params[:order_by]} #{order_method.upcase}")
         # if no order is passed, use the default
