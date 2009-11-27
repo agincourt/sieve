@@ -64,5 +64,10 @@ The filter_by method currently supports the following options (usage: filter_by 
 
 * max_length (integer)
   Sets the maxlength HTML attribute on <input> fields (used by string, text, decimal and integer input fields)
+  
+You can now choose attributes to order on also, using the order_by method, it follows the same format as filter_by, but has the following options instead:
+
+* default (bool/string)
+  You can set the default attribute to be ordered on by passing this option, it will default to descending, if you pass a true boolean, but you can explicitly set it with :default => 'asc' or :default => 'desc'. Note: only one attribute can be set to be the default.
 
 Copyright (c) 2009 Agincourt Technologies Ltd, released under the MIT license
