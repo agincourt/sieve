@@ -26,6 +26,10 @@ Step 3 : Setup the filtration in your controller
 
 Step 4 : Setup your filter form in your view
 
+  <%= sieve @yourmodels, :form => true %>
+  
+  OR:
+
   <%= form_tag('', :method => 'get') %>
     <fieldset>
       <legend>Filters</legend>

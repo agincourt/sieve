@@ -1,13 +1,35 @@
 module Sieve
   module ViewHelpers
-    def sieve(collection)
+    def sieve(collection, options = {})
+      logger.debug "OPTIONS: #{options.inspect}"
+      
+      # setup our config
+      options ||= {}
+      options.symbolize_keys!
       params[:filters] ||= {}
+      
+      # create and sort our fields
+      options[:form] ? sieve_form(collection, options) : sieve_fields(collection)
+    end
+    
+    private
+    def sieve_form(collection, options = {})
+      content_tag(:form,
+        content_tag(
+          :fieldset,
+          "<legend>Filters</legend><div>#{sieve_fields(collection)}\n#{submit_tag 'Update Filters &raquo;', :name => nil}</div>"
+        ),
+        :method => 'get',
+        :action => options[:form].kind_of?(String) ? options[:form] : ''
+      )
+    end
+    
+    def sieve_fields(collection)
       (collection.sieve_class.filtering_on.map { |attribute,options|
         filter_field_for(attribute,options)
       }.sort { |a,b| a[:name].to_s<=>b[:name].to_s }.map { |f| f[:field] } + sieve_order_fields(collection)).join("\n")
     end
     
-    private
     def sieve_order_fields(collection)
       collection.sieve_class.ordering_on ? [
         label_tag("filters_order_by", "Order By:"),
