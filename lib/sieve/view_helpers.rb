@@ -9,19 +9,19 @@ module Sieve
     
     private
     def sieve_order_fields(collection)
-      collection.ordering_on ? [
+      collection.sieve_class.ordering_on ? [
         label_tag("filters_order_by", "Order By:"),
         select_tag("filters[order_by]",
           options_for_select(
             [['-', nil]] +
-            collection.ordering_on.map { |attribute| [attribute.to_s.humanize, attribute] }, 
-            params[:filters][:order_by].present? ? params[:filters][:order_by].to_sym : collection.class.read_inheritable_attribute(:default_order_by)
+            collection.sieve_class.ordering_on.map { |attribute| [attribute.to_s.humanize, attribute] }, 
+            params[:filters][:order_by].present? ? params[:filters][:order_by].to_sym : collection.sieve_class.read_inheritable_attribute(:default_order_by)
           )
         ),
         select_tag("filters[order_method]",
           options_for_select(
             [['Ascending', 'asc'], ['Descending', 'desc']], 
-            params[:filters][:order_method].present? ? params[:filters][:order_method] : collection.class.read_inheritable_attribute(:default_order_method)
+            params[:filters][:order_method].present? ? params[:filters][:order_method] : collection.sieve_class.read_inheritable_attribute(:default_order_method)
           )
         )
       ] : []

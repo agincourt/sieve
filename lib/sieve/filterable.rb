@@ -97,6 +97,9 @@ module Sieve
     end
     
     module InstanceMethods
+      def sieve_class
+        self.class.sieve_class
+      end
     end
     
   end
