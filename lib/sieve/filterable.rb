@@ -4,8 +4,19 @@ module Sieve
     def self.included(base)
       base.extend(ClassMethods)
       base.class_eval do
-        named_scope :sieve_search, lambda { |attribute,value| { :conditions => ["#{attribute.to_s.downcase} LIKE ?", "%#{value}%"] } }
-        named_scope :sieve_exact, lambda { |attribute,value| { :conditions => ["#{attribute.to_s.downcase} = ?", value] } }
+        named_scope :sieve_search,  lambda { |attribute,value| { :conditions => ["#{sieve_class.table_name}.#{attribute.to_s.downcase} LIKE ?", "%#{value}%"] } }
+        named_scope :sieve_exact,   lambda { |attribute,value| { :conditions => ["#{sieve_class.table_name}.#{attribute.to_s.downcase} = ?", value] } }
+        named_scope :sieve_between, lambda { |attribute,from,to|
+          if from && to
+            { :conditions => ["#{sieve_class.table_name}.#{attribute.to_s.downcase} BETWEEN ? AND ?", from, to] }
+          elsif from
+            { :conditions => ["#{sieve_class.table_name}.#{attribute.to_s.downcase} > ?", from] }
+          elsif to
+            { :conditions => ["#{sieve_class.table_name}.#{attribute.to_s.downcase} < ?", to] }
+          else
+            {}
+          end
+        }
         named_scope :sieve_null, {}
       end
       base.send(:include, InstanceMethods)
@@ -34,6 +45,10 @@ module Sieve
                 # search for it
                 current_scope = current_scope.sieve_search(attribute, params[attribute])
               end
+            end
+          when :datetime, :date, :time
+            if params[attribute].present? && params[attribute][:date].present?
+              current_scope = current_scope.sieve_between(attribute, params[attribute][:date].from, params[attribute][:date].to)
             end
           when :integer, :decimal
             if params[attribute].present?

@@ -53,6 +53,10 @@ The filter_by method currently supports the following options (usage: filter_by 
 * collection (class or scope or array)
   Pass class, scope or array to which 'each' will be called to produce the same result as above. Defaults to calling the 'id' method on each object in the collection, unless you provide the 'display' option (see below).
   
+* as (symbol)
+  Only acceptable to datetime datatypes, you can alter the datetime select to a simple date or time using a symbol e.g:
+  :as => :time
+  
 * display (proc)
   You can define a custom Proc which will be run on each object in a collection to return more human output, e.g:
   :display => Proc.new { |article| ["#{article.title} by #{article.author}", article.id] }

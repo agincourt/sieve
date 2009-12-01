@@ -1,8 +1,6 @@
 module Sieve
   module ViewHelpers
-    def sieve(collection, options = {})
-      logger.debug "OPTIONS: #{options.inspect}"
-      
+    def sieve(collection, options = {})      
       # setup our config
       options ||= {}
       options.symbolize_keys!
@@ -52,6 +50,9 @@ module Sieve
     def filter_field_for(attribute, options)    
       label = label_tag("filters_#{attribute}", options[:label] ? options[:label] : attribute.to_s.humanize)
       
+      # override the type if an 'as' option is passed
+      options[:type] = options[:as] if options[:as] && [:datetime].include?(options[:type])
+      
       input = case options[:type]
       when :string, :text, :integer, :decimal
         if options[:collection]
@@ -73,6 +74,30 @@ module Sieve
         else
           text_field_tag("filters[#{attribute}]", params[:filters][attribute], :id => "filters_#{attribute}", :maxlength => options[:max_length])
         end
+      when :date
+        content_tag(
+          'span',
+          date_select("filters[#{attribute}]", "from", :include_blank => true, :end_year => Date.today.year, :object => params[:filters][attribute][:date]) +
+          ' - ' +
+          date_select("filters[#{attribute}]", "to", :include_blank => true, :end_year => Date.today.year, :object => params[:filters][attribute][:date]),
+          :class => 'date_select'
+        )
+      when :time
+        content_tag(
+          'span',
+          time_select("filters[#{attribute}]", "from", :include_blank => true, :object => params[:filters][attribute][:date]) +
+          ' - ' +
+          time_select("filters[#{attribute}]", "to", :include_blank => true, :object => params[:filters][attribute][:date]),
+          :class => 'time_select'
+        )
+      when :datetime
+        content_tag(
+          'span',
+          datetime_select("filters[#{attribute}]", "from", :include_blank => true, :end_year => Date.today.year, :object => params[:filters][attribute][:date]) +
+          ' - ' +
+          datetime_select("filters[#{attribute}]", "to", :include_blank => true, :end_year => Date.today.year, :object => params[:filters][attribute][:date]),
+          :class => 'datetime_select'
+        )
       when :boolean
         check_box_tag("filters[#{attribute}]", '1', params[:filters][attribute], :id => "filters_#{attribute}")
       else

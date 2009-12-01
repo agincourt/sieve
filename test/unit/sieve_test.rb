@@ -52,17 +52,52 @@ class SieveTest < Test::Unit::TestCase
     assert result.find(:all).kind_of?(Array)
   end
   
+  def test_should_use_between_searching_when_specifying_a_date_range
+    object = mocked_object
+    # filter by with set
+    object.send(:filter_by, :created_at)
+    # check the set is defined
+    assert object.filtering_on.include?(:created_at), 'Filter of DB attribute (created_at) not appearing in filtering_on list'
+    # let's filter:
+    result = object.filter(:created_at => { :date => Sieve::DateRange.new(mocked_date_range_attribute) })
+    assert result.class.name.to_s =~ /scope/i, 'Should return a ActiveRecord::NamedScope::Scope object'
+    assert result.find(:all).kind_of?(Array)
+  end
+  
   private
   def mocked_object
     # mock some columns (require name and type methods)
     column = Object.new
     column.stubs(:name).returns(:name)
     column.stubs(:type).returns(:string)
+
+    column_two = Object.new
+    column_two.stubs(:name).returns(:created_at)
+    column_two.stubs(:type).returns(:datetime)
     # mock the object
     object = TestObject
-    object.stubs(:columns).returns([column])
+    object.stubs(:columns).returns([column, column_two])
     # return
     object
+  end
+  
+  def mocked_date_range_attribute
+    # setup our dates
+    from = Time.now - 3.months
+    to   = Time.now - 5.days
+    # seperate them into form parameters
+    {
+      'from(1i)' => from.year,
+      'from(2i)' => from.month,
+      'from(3i)' => from.day,
+      'from(4i)' => from.hour,
+      'from(5i)' => from.min,
+      'to(1i)'   => to.year,
+      'to(2i)'   => to.month,
+      'to(3i)'   => to.day,
+      'to(4i)'   => to.hour,
+      'to(5i)'   => to.min,
+    }
   end
 end
 
