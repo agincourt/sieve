@@ -77,25 +77,25 @@ module Sieve
       when :date
         content_tag(
           'span',
-          date_select("filters[#{attribute}]", "from", :include_blank => true, :end_year => Date.today.year, :object => params[:filters][attribute][:date]) +
+          date_select("filters[#{attribute}]", "from", :include_blank => true, :end_year => Date.today.year, :object => params[:filters][attribute] ? params[:filters][attribute][:date] : nil) +
           ' - ' +
-          date_select("filters[#{attribute}]", "to", :include_blank => true, :end_year => Date.today.year, :object => params[:filters][attribute][:date]),
+          date_select("filters[#{attribute}]", "to", :include_blank => true, :end_year => Date.today.year, :object => params[:filters][attribute] ? params[:filters][attribute][:date] : nil),
           :class => 'date_select'
         )
       when :time
         content_tag(
           'span',
-          time_select("filters[#{attribute}]", "from", :include_blank => true, :object => params[:filters][attribute][:date]) +
+          time_select("filters[#{attribute}]", "from", :include_blank => true, :object => params[:filters][attribute] ? params[:filters][attribute][:date] : nil) +
           ' - ' +
-          time_select("filters[#{attribute}]", "to", :include_blank => true, :object => params[:filters][attribute][:date]),
+          time_select("filters[#{attribute}]", "to", :include_blank => true, :object => params[:filters][attribute] ? params[:filters][attribute][:date] : nil),
           :class => 'time_select'
         )
       when :datetime
         content_tag(
           'span',
-          datetime_select("filters[#{attribute}]", "from", :include_blank => true, :end_year => Date.today.year, :object => params[:filters][attribute][:date]) +
+          datetime_select("filters[#{attribute}]", "from", :include_blank => true, :end_year => Date.today.year, :object => params[:filters][attribute] ? params[:filters][attribute][:date] : nil) +
           ' - ' +
-          datetime_select("filters[#{attribute}]", "to", :include_blank => true, :end_year => Date.today.year, :object => params[:filters][attribute][:date]),
+          datetime_select("filters[#{attribute}]", "to", :include_blank => true, :end_year => Date.today.year, :object => params[:filters][attribute] ? params[:filters][attribute][:date] : nil),
           :class => 'datetime_select'
         )
       when :boolean
