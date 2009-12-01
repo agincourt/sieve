@@ -64,6 +64,20 @@ class SieveTest < Test::Unit::TestCase
     assert result.find(:all).kind_of?(Array)
   end
   
+  def test_should_accept_singular_dates
+    object = mocked_object
+    # filter by with set
+    object.send(:filter_by, :created_at)
+    # check the set is defined
+    assert object.filtering_on.include?(:created_at), 'Filter of DB attribute (created_at) not appearing in filtering_on list'
+    # let's filter:
+    result = object.filter(:created_at => { :date => Sieve::DateRange.new(mocked_date_range_attribute.delete_if { |k,v| k =~ /^from/ }) })
+    assert result.find(:all).kind_of?(Array)
+    # once more with feeling:
+    result = object.filter(:created_at => { :date => Sieve::DateRange.new(mocked_date_range_attribute.delete_if { |k,v| k =~ /^to/ }) })
+    assert result.find(:all).kind_of?(Array)
+  end
+  
   private
   def mocked_object
     # mock some columns (require name and type methods)
