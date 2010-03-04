@@ -11,6 +11,7 @@ module Sieve
     module InstanceMethods
       protected
       def setup_sieve_filters
+        params           ||= {}
         params[:filters] ||= {}
       
         params[:filters].each { |key,value|
